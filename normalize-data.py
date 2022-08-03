@@ -14,7 +14,7 @@ def readFile(url):
 
   return rawData
 
-def writeFile(url, outputFile):
+def writeFile(url, outputFile, fullWriter):
   with open(url, 'w', encoding='UTF8') as outputFile:
     writer = csv.writer(outputFile)
     
@@ -22,6 +22,7 @@ def writeFile(url, outputFile):
     writer.writerow(['date', 'high', 'low'])
     for point in ouputData:
       writer.writerow(point)
+      fullWriter.writerow(point)
 
 def getDates(arr):
   def flatten(x):
@@ -67,8 +68,15 @@ files=[
   "hsi-price-2022-01.csv",
   "hsi-price-2022-02.csv",
 ]
-for file in files:  
-  rawData = readFile("csvs/"+file)
-  dates = getDates(rawData)
-  ouputData=list(map(getHighsAndLows, dates))
-  writeFile('output/'+file, ouputData)
+
+
+with open("output/full-output.csv", 'w', encoding='UTF8') as fullOutputFile:
+  fullWriter = csv.writer(fullOutputFile)
+
+  fullWriter.writerow(['date', 'high', 'low'])
+
+  for file in files:  
+    rawData = readFile("csvs/"+file)
+    dates = getDates(rawData)
+    ouputData=list(map(getHighsAndLows, dates))
+    writeFile('output/'+file, ouputData, fullWriter)
